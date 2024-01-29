@@ -1,0 +1,77 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_deskdirector": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "dd_shareddeskdirector_f59e8"
+        },
+        "api": {
+          "name": "shared_deskdirector"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "Recurrence": {
+          "recurrence": {
+            "frequency": "Day",
+            "interval": 1,
+            "startTime": "2023-10-17T21:00:00Z"
+          },
+          "metadata": {
+            "operationMetadataId": "17c37eef-effd-4955-b662-60a65352bbfb"
+          },
+          "type": "Recurrence"
+        }
+      },
+      "actions": {
+        "WorkFlow": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "ffadf766-fe6a-4729-8e7b-cf3fbedb44e2"
+          },
+          "type": "Compose",
+          "inputs": "@workflow()"
+        },
+        "Find_tickets": {
+          "runAfter": {
+            "WorkFlow": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "50028727-7b5e-4ce3-9d76-93acdfc97f93"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_deskdirector",
+              "operationId": "FindTickets",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_deskdirector"
+            },
+            "parameters": {
+              "req/isOpen": false,
+              "req/companyId": 27
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}
